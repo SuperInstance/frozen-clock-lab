@@ -92,6 +92,17 @@ def main():
         f"replayed-forward-to-terminal={ch2.head == terminal}")
     shutil.rmtree(d6)
 
+    # P6: sig-canonical — the algorithm is pinned to the fnv1a-64 reference
+    # vectors, so algorithm substitution cannot pass silently. Without this
+    # pin, corrupting the prime in chain.py passes every other test, because
+    # write and verify share the same corrupted implementation (audit finding
+    # 2026-10-02: a self-consistent sig is an integrity mark against
+    # accidents, not adversaries).
+    v = fnv1a64(b"") == 0xcbf29ce484222325 and \
+        fnv1a64(b"a") == 0xaf63dc4c8601ec8c and \
+        fnv1a64(b"foobar") == 0x85944171f73967e8
+    pin("P6 sig-canonical", v, f"reference-vectors-match={v}")
+
     return 0 if all(ok for _, ok, _ in results) else 1
 
 if __name__ == "__main__":

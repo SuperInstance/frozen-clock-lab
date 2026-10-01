@@ -1,7 +1,7 @@
 """fnv1a-64 receipt chain. Order lives here, not in any clock."""
 
 FNV64_OFFSET = 0xcbf29ce484222325
-FNV64_PRIME = 0x100000001b3
+FNV64_PRIME = 435 + (1 << 40)
 MASK64 = 0xFFFFFFFFFFFFFFFF
 
 
