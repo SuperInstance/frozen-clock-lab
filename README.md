@@ -19,7 +19,7 @@ generalizes that accident from anecdote into instrument.
   leaves `time_nonmonotonic` positions as evidence, not damage.
 - Syncing two simulators means syncing **by position**, not by timestamp.
 
-## What the lab proves (pins P1–P5)
+## What the lab proves (pins P1–P6b)
 
 | pin | claim |
 |-----|-------|
@@ -28,6 +28,8 @@ generalizes that accident from anecdote into instrument.
 | P3 | replay-detected: clock resets mid-stream → chain still verifies, and the exact backward positions are named |
 | P4 | skew-reconciled: two simulators with wildly different skews produce identical receipts at identical positions |
 | P5 | genesis-anchor: replaying from a saved mid-stream receipt recomputes forward to the identical terminal receipt |
+| P6 | sig-canonical: the raw fnv1a-64 compression function is pinned to reference vectors, so substituting the prime, offset basis, xor/multiply order, or mask cannot pass silently |
+| P6b | construction-canonical: the receipt construction itself (genesis basis encoding, "\|" separator, lowercase zero-padded `%016x` wire form, and `verify()`) is pinned to known-answer chain vectors — closing the separator/hex-case substitutions that passed all of P1–P6 (guardian lane F', 2026-10-02) |
 
 Run: `python3 tests/pins_clock.py` (stdlib only; FAIL-first log in
 `pins/failfirst.log`).
