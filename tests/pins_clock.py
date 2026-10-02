@@ -103,6 +103,22 @@ def main():
         fnv1a64(b"foobar") == 0x85944171f73967e8
     pin("P6 sig-canonical", v, f"reference-vectors-match={v}")
 
+    # P6b: construction-canonical — P6 pins only the raw compression
+    # function, but the receipt CONSTRUCTION (genesis basis encoding, the "|"
+    # separator, the lowercase zero-padded %016x wire form) is equally part
+    # of the algorithm per the README doctrine. Guardian lane F' (adversarial
+    # audit 2026-10-02) showed that swapping the separator ("|" -> "||") or
+    # the hex case (%016x -> %016X) passed ALL SIX pins silently while
+    # producing a byte-incompatible chain. Pin the full construction with
+    # known-answer vectors, and exercise verify() — which no other pin calls —
+    # so it cannot rot.
+    rc = ReceiptChain()
+    v2 = rc.head == "cbf29ce484222325" and \
+        rc.append("alpha") == "93fad21a78b7d2cf" and \
+        rc.append("beta-0000002a") == "c1fffbe12137ec9b" and \
+        rc.verify()
+    pin("P6b construction-canonical", v2, f"chain-vectors-and-verify-match={v2}")
+
     return 0 if all(ok for _, ok, _ in results) else 1
 
 if __name__ == "__main__":
